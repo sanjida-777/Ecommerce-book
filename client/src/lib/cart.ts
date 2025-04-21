@@ -47,20 +47,19 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
   // Load cart from local storage
   useEffect(() => {
-    if (user) {
-      const items = cartService.getCartItems(user.id.toString());
-      const allBooks = bookService.getAll();
+    // Use user id if logged in, otherwise use 'guest'
+    const userId = user ? user.id.toString() : 'guest';
+    
+    const items = cartService.getCartItems(userId);
+    const allBooks = bookService.getAll();
 
-      const itemsWithDetails = items.map(item => {
-        const book = allBooks.find(b => b.id === item.bookId);
-        if (!book) throw new Error(`Book with ID ${item.bookId} not found`);
-        return { ...item, book };
-      });
+    const itemsWithDetails = items.map(item => {
+      const book = allBooks.find(b => b.id === item.bookId);
+      if (!book) throw new Error(`Book with ID ${item.bookId} not found`);
+      return { ...item, book };
+    });
 
-      setCartItems(itemsWithDetails);
-    } else {
-      setCartItems([]);
-    }
+    setCartItems(itemsWithDetails);
   }, [user]);
 
   // Update cart total and count
@@ -79,14 +78,17 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const addToCart = (bookId: number, quantity = 1) => {
-    if (!user) return;
-    
     try {
       const book = bookService.getById(bookId);
       if (!book) throw new Error(`Book with ID ${bookId} not found`);
       
-      const cartItem = cartService.addToCart({
-        userId: user.id.toString(),
+      let cartItem;
+      
+      // Use a guest ID for non-logged in users
+      const userId = user ? user.id.toString() : 'guest';
+      
+      cartItem = cartService.addToCart({
+        userId,
         bookId,
         quantity
       });
@@ -146,10 +148,9 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const clearCart = () => {
-    if (!user) return;
-    
     try {
-      cartService.clearCart(user.id.toString());
+      const userId = user ? user.id.toString() : 'guest';
+      cartService.clearCart(userId);
       setCartItems([]);
     } catch (error) {
       console.error('Error clearing cart:', error);
@@ -157,13 +158,16 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const checkout = async (): Promise<number | null> => {
-    if (!user || cartItems.length === 0) return null;
+    if (cartItems.length === 0) return null;
     
     try {
       setIsCheckingOut(true);
       
+      // Use guest checkout if not logged in
+      const userId = user ? user.id.toString() : 'guest';
+      
       // Create order
-      const order = orderService.createOrder(user.id.toString(), cartTotal);
+      const order = orderService.createOrder(userId, cartTotal);
       
       // Create order items
       const orderItems = cartItems.map(item => ({
