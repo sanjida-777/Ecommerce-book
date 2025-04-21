@@ -29,7 +29,7 @@ export default function FeaturedCategories() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {categories.map((category) => (
             <Link key={category.id} href={`/category/${category.id}`}>
-              <a className="group relative h-64 rounded-lg overflow-hidden shadow-md">
+              <div className="group relative h-64 rounded-lg overflow-hidden shadow-md cursor-pointer">
                 <img 
                   src={category.image} 
                   alt={`${category.title} books`} 
@@ -40,7 +40,7 @@ export default function FeaturedCategories() {
                   <h3 className="text-white font-heading font-bold text-2xl mb-1">{category.title}</h3>
                   <p className="text-white text-opacity-80">{category.description}</p>
                 </div>
-              </a>
+              </div>
             </Link>
           ))}
         </div>
