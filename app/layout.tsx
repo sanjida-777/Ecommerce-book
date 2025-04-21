@@ -1,15 +1,12 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import CartSidebar from "./components/CartSidebar";
-import React from "react";
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
-  title: "BookStore - Your Online Bookshop",
-  description: "Browse and buy your favorite books online",
+export const metadata: Metadata = {
+  title: 'BookVerse - Your Online Bookstore',
+  description: 'Discover a vast collection of books across various genres at BookVerse',
 };
 
 export default function RootLayout({
@@ -20,14 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="flex flex-col min-h-screen">
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-          <CartSidebar />
-        </div>
+        <main className="min-h-screen">
+          {children}
+        </main>
       </body>
     </html>
   );
